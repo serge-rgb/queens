@@ -45,7 +45,6 @@
              ((let ((diff_x (abs (- x x_o)))
                     (diff_y (abs (- y y_o))))
                 (and (= diff_x diff_y) (> diff_x 0))) (setq score (+ score 1))))))
-
     score))
 
 (defun fitness (queens)
@@ -112,9 +111,9 @@
              (let* ((best (first (sort-by-fitness pops)))
                     (f (fitness best)))
                (if (< f min)
+                     (setq min f))
+               (if (= f (* 100 *board-size*))
                    (progn
-                     (setq min f)
                      (print-population best)
-                     (print min)))
-               (if (= f (* 100 *board-size*)) (return))))
+                     (return)))))
         (print (list "===== done ===="))))
