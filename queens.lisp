@@ -3,8 +3,7 @@
 
 (declaim (optimize (speed 3) (space 0) (debug 0)))
 
-(defvar *num-populations* 10000)
-(defvar *random-candidates* 5000)
+(defvar *num-populations* 1000)
 (defvar *board-size* 8)
 
 (defun gen-population ()
@@ -65,7 +64,7 @@
   "Returns (score (queen1, queen2, ..., queen8))"
   (mapcar 'list (mapcar #'fitness pops) pops))
 
-(defun wiggle () (- (random 1) 1))
+(defun wiggle () (- (random (floor (/ *board-size* 2))) 1))
 (defun mutate-pop (pop)
   "Take the queen with greatest individual-fitness and wiggle it"
   (let* (;; Get fitness for each element of pop
@@ -104,11 +103,6 @@
                               (if (< (fitness child) (fitness dad))
                                   child
                                   dad)) reversed children)))
-
-    (loop for i from 1 to *random-candidates* do
-         (setf (nth (+ (- *num-populations* *random-candidates*) (- i 1))
-                    new-gen)
-               (gen-population)))
     new-gen))
 
 (time (let ((pops (loop for i from 1 to *num-populations* collect (gen-population)))
