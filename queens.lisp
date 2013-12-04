@@ -1,23 +1,24 @@
 ;; Eight queens solver.
 ;; - Sergio Gonzalez 2013.
 
-(require 'cl-randist)
+(declaim (optimize (speed 3) (space 0) (debug 0)))
 
 (defvar *num-populations* 10000)
 (defvar *random-candidates* 5000)
+(defvar *board-size* 8)
 
 (defun gen-population ()
-  " Population: a list of 8 (x, y) cartesian coordinates."
-  (loop for i from 1 to 8 collect
-       (list (random 8) (random 8))))
+  " Population: a list of *board-size* (x, y) cartesian coordinates."
+  (loop for i from 1 to *board-size* collect
+       (list (random *board-size*) (random *board-size*))))
 
 (defun print-population (pop)
   "Print a grid representing a solution"
   (print "* 0 1 2 3 4 5 6 7")
-  (loop for y from 0 to 7 do
+  (loop for y from 0 to (- *board-size* 1) do
        (let ((line ""))
          (setq line (concatenate 'string (write-to-string y) " "))
-         (loop for x from 0 to 7 do
+         (loop for x from 0 to (- *board-size* 1) do
               (setq line (concatenate 'string line (if (find (list x y) pop :test
                                                              #'(lambda (a b)
                                                                  (and (= (first a) (first b))
@@ -28,7 +29,6 @@
 
 (defun individual-fitness (queen queens)
   "Lower is better. 0 is impossible because everyone is penalized for being equal to itself."
-  (declare (optimize (speed 3)))
   (let ((score 0)
         (x (first queen))
         (y (second queen)))
@@ -50,7 +50,6 @@
     score))
 
 (defun fitness (queens)
-  (declare (optimize (speed 3)))
   (let ((score 0))
     (map nil #'(lambda (queen) (setq score (+ score (individual-fitness queen queens)))) queens)
     score))
@@ -112,7 +111,7 @@
                (gen-population)))
     new-gen))
 
-(let ((pops (loop for i from 1 to *num-populations* collect (gen-population)))
+(time (let ((pops (loop for i from 1 to *num-populations* collect (gen-population)))
       (min 10000))
   (loop for i from 0 do
        (setq pops (new-generation pops))
@@ -123,5 +122,5 @@
                (setq min f)
                (print-population best)
                (print min)))
-         (if (= f 800) (return))))
-  (print (list "...done...")))
+         (if (= f (* 100 *board-size*)) (return))))
+  (print (list "===== done ===="))))
