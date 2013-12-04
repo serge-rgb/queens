@@ -73,9 +73,9 @@
          (scored (mapcar #'list individual-fitness pop))
          ;; sort pop by fitness
          (sorted (mapcar #'second (sort scored #'(lambda (a b)
-                                  (let ((sa (first a))
-                                        (sb (first b)))
-                                    (if (> sa sb) 1))))))
+                                                   (let ((sa (first a))
+                                                         (sb (first b)))
+                                                     (if (> sa sb) 1))))))
          ;; get the worst element
          (candidate (first sorted))
          ;; wiggle it
@@ -106,15 +106,15 @@
     new-gen))
 
 (time (let ((pops (loop for i from 1 to *num-populations* collect (gen-population)))
-      (min 10000))
-  (loop for i from 0 do
-       (setq pops (new-generation pops))
-       (let* ((best (first (sort-by-fitness pops)))
-              (f (fitness best)))
-         (if (< f min)
-             (progn
-               (setq min f)
-               (print-population best)
-               (print min)))
-         (if (= f (* 100 *board-size*)) (return))))
-  (print (list "===== done ===="))))
+            (min 10000))
+        (loop for i from 0 do
+             (setq pops (new-generation pops))
+             (let* ((best (first (sort-by-fitness pops)))
+                    (f (fitness best)))
+               (if (< f min)
+                   (progn
+                     (setq min f)
+                     (print-population best)
+                     (print min)))
+               (if (= f (* 100 *board-size*)) (return))))
+        (print (list "===== done ===="))))
